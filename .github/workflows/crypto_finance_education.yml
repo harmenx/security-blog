@@ -1,0 +1,68 @@
+name: Crypto Finance Education
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 10 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+.    permissions:
+      contents: write
+    env:
+      POE_API_KEY: ${{ secrets.POE_API_KEY }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Generate Crypto Post
+      if: github.event_name == 'schedule'
+      run: |
+        python generate_post.py "Understanding Bitcoin Halving"
+
+    - name: Generate Finance Post
+      if: github.event_name == 'schedule'
+      run: |
+        python generate_post.py "Personal Finance Basics: Budgeting and Saving"
+
+    - name: Generate Making Money Post
+      if: github.event_name == 'schedule'
+      run: |
+        python generate_post.py "Side Hustles You Can Start Today"
+
+    - name: Commit and push new posts
+      if: github.event_name == 'schedule'
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "chore(bot): generate new blog posts"
+        file_pattern: "_posts/*.md"
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: '_posts'
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
