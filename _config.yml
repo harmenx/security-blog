@@ -1,2 +1,8 @@
 title: Security Research Blog
 description: Your daily source for security news and research.
+url: https://harmen.dev
+twitter_username: harmendewit
+keywords: security, research, blog, cybersecurity
+
+plugins:
+  - jekyll-sitemap
