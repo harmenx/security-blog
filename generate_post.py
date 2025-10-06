@@ -40,13 +40,9 @@ The blog post should have the following structure:
     )
     
     completion = client.chat.completions.create(
-        model="a2",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
+        model="gpt-4", 
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=1024, # Increased max_tokens for potentially longer prompts with news
     )
 
     response = completion.choices[0].message.content
