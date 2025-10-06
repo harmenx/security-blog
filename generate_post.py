@@ -3,6 +3,7 @@ import sys
 import datetime
 import requests
 import re
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,25 +17,44 @@ def get_security_news(api_key):
 
 def generate_content_from_article(article):
     """Generates a blog post from a news article."""
-    # This is a simulated LLM. In a real-world scenario, you would use a real LLM to generate the content.
     title = article["title"]
     content = article["content"]
     
     if not content:
         content = "No content available for this article."
 
+    prompt = f"""
+Please write a blog post about the following article:
+Title: {title}
+Content: {content}
+
+The blog post should have the following structure:
+- A summary of the article.
+- An analysis of the article.
+- A conclusion.
+"""
+
+    client = OpenAI(
+        api_key=os.getenv("POE_API_KEY"),
+        base_url="https://api.poe.com/v1"
+    )
+    
+    completion = client.chat.completions.create(
+        model="a2",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+    )
+
+    response = completion.choices[0].message.content
+
     blog_post = f"""
 ## {title}
 
-{content}
-
-### Our Analysis
-
-This is a simulated analysis of the news article. In a real-world scenario, you would use a real LLM to generate a more detailed analysis.
-
-### Conclusion
-
-This is a simulated conclusion. In a real-world scenario, you would use a real LLM to generate a more detailed conclusion.
+{response}
 """
     return blog_post
 
