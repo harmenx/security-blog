@@ -99,6 +99,7 @@ if __name__ == "__main__":
     try:
         articles = get_security_news(api_key)
         
+        print(f"Found {articles} articles.")
         if not articles:
             print("No articles found.")
             sys.exit(0)
