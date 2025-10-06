@@ -79,6 +79,19 @@ description: \"{article['description']}\"
 """
     return filename, front_matter + content
 
+def get_existing_post_slugs(posts_dir):
+    """Returns a set of existing post slugs."""
+    if not os.path.exists(posts_dir):
+        return set()
+    
+    slugs = set()
+    for filename in os.listdir(posts_dir):
+        if filename.endswith(".md"):
+            match = re.match(r"\d{4}-\d{2}-\d{2}-(.*)\.md", filename)
+            if match:
+                slugs.add(match.group(1))
+    return slugs
+
 if __name__ == "__main__":
     api_key = os.getenv("API_KEY")
     poe_api_key = os.getenv("POE_API_KEY")
@@ -91,29 +104,36 @@ if __name__ == "__main__":
         print("Error: POE_API_KEY environment variable not set.")
         sys.exit(1)
 
+    posts_dir = "_posts"
+    existing_slugs = get_existing_post_slugs(posts_dir)
+
     print("Fetching security news...")
     try:
         articles = get_security_news(api_key)
         
-        print(f"Found {articles} articles.")
         if not articles:
             print("No articles found.")
             sys.exit(0)
 
-        # Generate a post for the first article
-        article = articles[0]
-        print(f"Generating post for article: {article['title']}")
-        
-        generated_content = generate_content_from_article(article)
-        filename, full_content = create_jekyll_post(article, generated_content)
+        for article in articles:
+            title = article["title"]
+            slug = title.lower().replace(" ", "-").replace(":", "").replace(",", "").replace("'", "")
 
-        posts_dir = "_posts"
-        os.makedirs(posts_dir, exist_ok=True)
-        filepath = os.path.join(posts_dir, filename)
+            if slug in existing_slugs:
+                print(f"Skipping duplicate post: {title}")
+                continue
 
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(full_content)
-        print(f"Successfully created post: {filepath}")
+            print(f"Generating post for article: {title}")
+            
+            generated_content = generate_content_from_article(article)
+            filename, full_content = create_jekyll_post(article, generated_content)
+
+            os.makedirs(posts_dir, exist_ok=True)
+            filepath = os.path.join(posts_dir, filename)
+
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(full_content)
+            print(f"Successfully created post: {filepath}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error communicating with NewsAPI: {e}")
