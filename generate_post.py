@@ -85,9 +85,14 @@ description: \"{article['description']}\"
 
 if __name__ == "__main__":
     api_key = os.getenv("API_KEY")
+    poe_api_key = os.getenv("POE_API_KEY")
 
     if not api_key:
         print("Error: API_KEY environment variable not set.")
+        sys.exit(1)
+        
+    if not poe_api_key:
+        print("Error: POE_API_KEY environment variable not set.")
         sys.exit(1)
 
     print("Fetching security news...")
