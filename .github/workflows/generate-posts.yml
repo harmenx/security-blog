@@ -12,6 +12,7 @@ jobs:
       contents: write
     env:
       API_KEY: ${{ secrets.API_KEY }}
+      POE_API_KEY: ${{ secrets.POE_API_KEY }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
