@@ -33,11 +33,8 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
-    - name: Generate Post
+    - name: Generate and Commit Posts
       run: python generate_post.py
 
-    - name: Commit and push new posts
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: "chore(bot): generate new blog posts"
-        file_pattern: "_posts/*.md"
+    - name: Push new posts
+      run: git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
