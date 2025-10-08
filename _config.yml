@@ -4,5 +4,4 @@ url: https://harmen.dev
 twitter_username: harmendewit
 keywords: security, research, blog, cybersecurity
 
-plugins:
-  - jekyll-sitemap
+theme: minimal-mistakes-jekyll
