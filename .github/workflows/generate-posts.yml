@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write # Add actions permission to dispatch workflow
     env:
       API_KEY: ${{ secrets.API_KEY }}
       POE_API_KEY: ${{ secrets.POE_API_KEY }}
@@ -38,3 +39,14 @@ jobs:
 
     - name: Push new posts
       run: git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
+    - name: Trigger Build Workflow
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'build.yml',
+            ref: context.ref
+          })
