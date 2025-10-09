@@ -16,20 +16,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-
-      - name: Update RubyGems
-        run: gem update --system
-
-      - name: Update github-pages gem
-        run: bundle update github-pages
-
-      - name: Install dependencies
-        run: |
-          bundle install --jobs 4 --retry 3
-          bundle clean --force
-
-      - name: Run Jekyll Doctor
-        run: bundle exec jekyll doctor
+          bundler-cache: true
 
       - name: Build with Jekyll
         run: bundle exec jekyll build
