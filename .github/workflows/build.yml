@@ -17,10 +17,16 @@ jobs:
         with:
           ruby-version: '3.0'
 
+      - name: Update github-pages gem
+        run: bundle update github-pages
+
       - name: Install dependencies
         run: |
           bundle install --jobs 4 --retry 3
           bundle clean --force
+
+      - name: Run Jekyll Doctor
+        run: bundle exec jekyll doctor
 
       - name: Build with Jekyll
         run: bundle exec jekyll build
