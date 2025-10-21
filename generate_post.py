@@ -136,16 +136,7 @@ if __name__ == "__main__":
                 f.write(full_content)
             print(f"Successfully created post: {filepath}")
 
-            try:
-                subprocess.run(['git', 'config', '--local', 'user.name', 'github-actions'], check=True)
-                subprocess.run(['git', 'config', '--local', 'user.email', 'github-actions[bot]@users.noreply.github.com'], check=True)
-                subprocess.run(['git', 'add', filepath], check=True)
-                subprocess.run(['git', 'commit', '-m', f"feat(bot): ✨ Generate new blog post: {title}"], check=True)
-                print(f"Successfully committed {filepath}")
-            except subprocess.CalledProcessError as e:
-                print(f"Error during git operation: {e}")
-            except FileNotFoundError:
-                print("Error: git command not found. Make sure git is installed and in your PATH.")
+            print(f"Post saved to {filepath}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error communicating with NewsAPI: {e}")
